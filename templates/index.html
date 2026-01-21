@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记本电脑数据分析工具</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/advanced.css') }}" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #F2F3F5;
+            color: #1D2129;
+        }
+        
+        .content-auto {
+            content-visibility: auto;
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 400px;
+            width: 100%;
+        }
+        
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        
+        .tab-active {
+            border-bottom: 2px solid #165DFF;
+            color: #165DFF;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- 顶部导航 -->
+    <header class="bg-white shadow-md sticky top-0 z-50 transition-all duration-300" id="main-header">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-laptop text-blue-600 text-2xl"></i>
+                <h1 class="text-xl md:text-2xl font-bold text-gray-800">笔记本电脑数据分析工具</h1>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="#overview" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">概览</a>
+                <a href="#statistics" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">统计分析</a>
+                <a href="#visualization" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">数据可视化</a>
+                <a href="#prediction" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">价格预测</a>
+                <a href="#advanced" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">高级分析</a>
+                <div class="ml-6 flex items-center space-x-4">
+                    <span class="text-gray-700">欢迎，{{ current_user.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition-colors duration-200">登出</a>
+                </div>
+            </nav>
+            <button class="md:hidden text-gray-800 text-xl" id="mobile-menu-button">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white shadow-lg absolute w-full" id="mobile-menu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#overview" class="py-2 text-gray-600 hover:text-blue-600 transition-colors duration-200">概览</a>
+                <a href="#statistics" class="py-2 text-gray-600 hover:text-blue-600 transition-colors duration-200">统计分析</a>
+                <a href="#visualization" class="py-2 text-gray-600 hover:text-blue-600 transition-colors duration-200">数据可视化</a>
+                <a href="#prediction" class="py-2 text-gray-600 hover:text-blue-600 transition-colors duration-200">价格预测</a>
+                <a href="#advanced" class="py-2 text-gray-600 hover:text-blue-600 transition-colors duration-200">高级分析</a>
+                <div class="py-2 border-t border-gray-200 mt-2">
+                    <div class="py-2 text-gray-700">欢迎，{{ current_user.username }}</div>
+                    <a href="{{ url_for('logout') }}" class="py-2 text-red-600 hover:text-red-800 transition-colors duration-200">登出</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- 数据上传区域 -->
+        <section id="overview" class="mb-12">
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <i class="fa fa-file-import text-blue-600 mr-2"></i>数据分析
+                </h2>
+                <p class="text-gray-600 mb-6">系统已加载笔记本电脑数据，可以进行分析和预测。</p>
+                
+                <div class="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center transition-all duration-300 hover:border-blue-500">
+                    <i class="fa fa-chart-bar text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-lg font-medium mb-2">数据已就绪</h3>
+                    <p class="text-gray-600 mb-4">点击下方按钮开始分析</p>
+                    <button id="analyze-button" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg cursor-pointer transition-all duration-200">
+                        <i class="fa fa-play mr-2"></i>开始分析
+                    </button>
+                </div>
+                
+                <div id="loading-info" class="hidden mt-6 p-4 bg-gray-100 rounded-lg">
+                    <h3 class="font-medium mb-2">数据分析进度</h3>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                        <div class="bg-blue-600 h-2.5 rounded-full progress-bar" id="analyze-progress" style="width: 0%"></div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600" id="analyze-status">
+                        准备分析...
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据概览区域 -->
+        <section id="statistics" class="mb-12 hidden">
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fa fa-chart-pie text-blue-600 mr-2"></i>数据概览
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg card-shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-600">总商品数</h3>
+                            <i class="fa fa-laptop text-blue-600 text-2xl"></i>
+                        </div>
+                        <p class="text-3xl font-bold" id="total-products">--</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg card-shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-600">平均价格</h3>
+                            <i class="fa fa-yen-sign text-green-600 text-2xl"></i>
+                        </div>
+                        <p class="text-3xl font-bold" id="avg-price">--</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg card-shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-600">总销量</h3>
+                            <i class="fa fa-shopping-cart text-purple-600 text-2xl"></i>
+                        </div>
+                        <p class="text-3xl font-bold" id="total-sales">--</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-lg card-shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-600">品牌数量</h3>
+                            <i class="fa fa-building text-gray-600 text-2xl"></i>
+                        </div>
+                        <p class="text-3xl font-bold" id="total-brands">--</p>
+                    </div>
+                </div>
+                
+                <!-- 数据表格 -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-lg">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600">
+                                <th class="py-3 px-4 text-left font-medium">品牌</th>
+                                <th class="py-3 px-4 text-left font-medium">商品数量</th>
+                                <th class="py-3 px-4 text-left font-medium">平均价格</th>
+                                <th class="py-3 px-4 text-left font-medium">总销量</th>
+                                <th class="py-3 px-4 text-left font-medium">市场份额</th>
+                            </tr>
+                        </thead>
+                        <tbody id="brand-table-body">
+                            <!-- JavaScript将填充此区域 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据可视化区域 -->
+        <section id="visualization" class="mb-12 hidden">
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fa fa-chart-bar text-blue-600 mr-2"></i>数据可视化
+                </h2>
+                
+                <!-- 图表标签页 -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex" id="chart-tabs">
+                        <button class="tab-active py-4 px-4 border-b-2 border-transparent text-sm font-medium focus:outline-none" data-tab="price-distribution">
+                            价格分布
+                        </button>
+                        <button class="py-4 px-4 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none" data-tab="brand-market-share">
+                            品牌市场份额
+                        </button>
+                        <button class="py-4 px-4 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none" data-tab="price-sales-relationship">
+                            价格与销量关系
+                        </button>
+                        <button class="py-4 px-4 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none" data-tab="ram-distribution">
+                            内存分布
+                        </button>
+                        <button class="py-4 px-4 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none" data-tab="cpu-distribution">
+                            CPU分布
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- 图表容器 -->
+                <div class="tab-content" id="price-distribution-content">
+                    <div class="chart-container">
+                        <canvas id="priceDistributionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="tab-content hidden" id="brand-market-share-content">
+                    <div class="chart-container">
+                        <canvas id="brandMarketShareChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="tab-content hidden" id="price-sales-relationship-content">
+                    <div class="chart-container">
+                        <canvas id="priceSalesRelationshipChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="tab-content hidden" id="ram-distribution-content">
+                    <div class="chart-container">
+                        <canvas id="ramDistributionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="tab-content hidden" id="cpu-distribution-content">
+                    <div class="chart-container">
+                        <canvas id="cpuDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 高级分析区域 -->
+        <section id="advanced" class="mb-12 hidden">
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fa fa-brain text-blue-600 mr-2"></i>高级分析
+                </h2>
+                
+                <!-- 高级分析标签页 -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex flex-wrap" id="advanced-tabs">
+                        <button class="tab-active py-4 px-4 border-b-2 border-transparent text-sm font-medium focus:outline-none" data-tab="competitive">
+                            竞品分析
+                        </button>
+                        <button class="py-4 px-4 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none" data-tab="price-trend">
+                            价格趋势预测
+                        </button>
+                        <button class="py-4 px-4 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none" data-tab="sentiment">
+                            用户评价分析
+                        </button>
+                        <button class="py-4 px-4 border-b-2 border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none" data-tab="clustering">
+                            市场细分聚类
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- 竞品分析内容 -->
+                <div class="tab-content" id="competitive-content">
+                    <div class="analysis-header mb-4">
+                        <h3 class="analysis-title">竞品分析</h3>
+                        <div class="analysis-filters">
+                            <select id="competitive-brand" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                <option value="">选择品牌</option>
+                                <!-- JavaScript将填充此区域 -->
+                            </select>
+                            <button id="competitive-analyze-btn" class="btn-primary">
+                                <i class="fa fa-search mr-2"></i>分析
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="competitive-loading" class="text-center py-8 hidden">
+                        <i class="fa fa-spinner fa-spin text-blue-600 text-3xl"></i>
+                        <p class="mt-2 text-gray-600">正在分析竞品数据...</p>
+                    </div>
+                    
+                    <div id="competitive-result" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="data-card bg-gradient-to-br from-blue-50 to-blue-100">
+                                <div class="icon text-blue-600">
+                                    <i class="fa fa-laptop"></i>
+                                </div>
+                                <div class="title">产品数量</div>
+                                <div class="value" id="target-product-count">--</div>
+                            </div>
+                            <div class="data-card bg-gradient-to-br from-green-50 to-green-100">
+                                <div class="icon text-green-600">
+                                    <i class="fa fa-yen-sign"></i>
+                                </div>
+                                <div class="title">平均价格</div>
+                                <div class="value" id="target-avg-price">--</div>
+                            </div>
+                            <div class="data-card bg-gradient-to-br from-purple-50 to-purple-100">
+                                <div class="icon text-purple-600">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </div>
+                                <div class="title">总销量</div>
+                                <div class="value" id="target-total-sales">--</div>
+                            </div>
+                            <div class="data-card bg-gradient-to-br from-gray-50 to-gray-100">
+                                <div class="icon text-gray-600">
+                                    <i class="fa fa-chart-pie"></i>
+                                </div>
+                                <div class="title">市场份额</div>
+                                <div class="value" id="target-market-share">--</div>
+                            </div>
+                        </div>
+                        
+                        <h4 class="font-medium text-lg mb-3">竞争对手分析</h4>
+                        <div id="competitors-container" class="space-y-4">
+                            <!-- JavaScript将填充此区域 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 价格趋势预测内容 -->
+                <div class="tab-content hidden" id="price-trend-content">
+                    <div class="analysis-header mb-4">
+                        <h3 class="analysis-title">价格趋势预测</h3>
+                        <div class="analysis-filters">
+                            <select id="trend-brand" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                <option value="">选择品牌</option>
+                                <!-- JavaScript将填充此区域 -->
+                            </select>
+                            <select id="trend-ram" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                <option value="">选择内存</option>
+                                <!-- JavaScript将填充此区域 -->
+                            </select>
+                            <select id="trend-days" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                <option value="30">30天</option>
+                                <option value="60">60天</option>
+                                <option value="90">90天</option>
+                            </select>
+                            <button id="trend-analyze-btn" class="btn-primary">
+                                <i class="fa fa-chart-line mr-2"></i>预测
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="trend-loading" class="text-center py-8 hidden">
+                        <i class="fa fa-spinner fa-spin text-blue-600 text-3xl"></i>
+                        <p class="mt-2 text-gray-600">正在预测价格趋势...</p>
+                    </div>
+                    
+                    <div id="trend-result" class="hidden">
+                        <div class="trend-card">
+                            <div class="trend-header">
+                                <h4 class="trend-title">价格趋势分析</h4>
+                                <span id="trend-filter-info" class="text-sm text-gray-600">全部数据</span>
+                            </div>
+                            
+                            <div class="trend-summary">
+                                <div class="trend-stat">
+                                    <div class="trend-stat-value" id="trend-current-price">--</div>
+                                    <div class="trend-stat-label">当前平均价格</div>
+                                </div>
+                                <div class="trend-stat">
+                                    <div class="trend-stat-value" id="trend-predicted-price">--</div>
+                                    <div class="trend-stat-label">预测未来价格</div>
+                                </div>
+                                <div class="trend-stat">
+                                    <div class="trend-stat-value" id="trend-change-percent">--</div>
+                                    <div class="trend-stat-label">变化百分比</div>
+                                </div>
+                                <div class="trend-stat">
+                                    <div class="trend-stat-value" id="trend-direction">--</div>
+                                    <div class="trend-stat-label">价格趋势</div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-container">
+                                <canvas id="priceTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户评价分析内容 -->
+                <div class="tab-content hidden" id="sentiment-content">
+                    <div class="analysis-header mb-4">
+                        <h3 class="analysis-title">用户评价情感分析</h3>
+                        <div class="analysis-filters">
+                            <select id="sentiment-brand" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500">
+                                <option value="">选择品牌</option>
+                                <!-- JavaScript将填充此区域 -->
+                            </select>
+                            <button id="sentiment-analyze-btn" class="btn-primary">
+                                <i class="fa fa-comments mr-2"></i>分析
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="sentiment-loading" class="text-center py-8 hidden">
+                        <i class="fa fa-spinner fa-spin text-blue-600 text-3xl"></i>
+                        <p class="mt-2 text-gray-600">正在分析用户评价...</p>
+                    </div>
+                    
+                    <div id="sentiment-result" class="hidden">
+                        <div class="sentiment-card">
+                            <div class="sentiment-header">
+                                <h4 class="text-lg font-medium mb-2">情感分析结果</h4>
+                                <p class="text-sm text-gray-600" id="sentiment-filter-info">全部评价</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="col-span-1">
+                                    <div class="sentiment-score">
+                                        <div class="score-value" id="sentiment-score-value">--</div>
+                                        <div class="score-label">情感得分 (0-100)</div>
+                                    </div>
+                                    
+                                    <!-- 新增：平均评分展示 -->
+                                    <div class="sentiment-score mt-4">
+                                        <div class="score-value text-yellow-500" id="average-rating-value">--</div>
+                                        <div class="score-label">平均评分 (1-5星)</div>
+                                        <div class="flex justify-center mt-2" id="rating-stars">
+                                            <i class="fa fa-star text-yellow-500 text-xl mx-1"></i>
+                                            <i class="fa fa-star text-yellow-500 text-xl mx-1"></i>
+                                            <i class="fa fa-star text-yellow-500 text-xl mx-1"></i>
+                                            <i class="fa fa-star text-yellow-500 text-xl mx-1"></i>
+                                            <i class="fa fa-star-half-alt text-yellow-500 text-xl mx-1"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center mb-4">
+                                        <div class="text-sm text-gray-600 mb-2">评价总数</div>
+                                        <div class="text-2xl font-bold" id="sentiment-total-reviews">--</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-span-2">
+                                    <h5 class="font-medium mb-3">情感分布</h5>
+                                    <div class="mb-4">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">积极评价</span>
+                                            <span class="text-sm" id="sentiment-positive-percent">--</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                            <div class="bg-green-500 h-2.5 rounded-full" id="sentiment-positive-bar" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">中性评价</span>
+                                            <span class="text-sm" id="sentiment-neutral-percent">--</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                            <div class="bg-yellow-500 h-2.5 rounded-full" id="sentiment-neutral-bar" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-sm">消极评价</span>
+                                            <span class="text-sm" id="sentiment-negative-percent">--</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                            <div class="bg-red-500 h-2.5 rounded-full" id="sentiment-negative-bar" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="keywords-section mt-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h5 class="font-medium mb-3">积极关键词</h5>
+                                        <div id="positive-keywords">
+                                            <!-- JavaScript将填充此区域 -->
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-medium mb-3">消极关键词</h5>
+                                        <div id="negative-keywords">
+                                            <!-- JavaScript将填充此区域 -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 市场细分聚类内容 -->
+                <div class="tab-content hidden" id="clustering-content">
+                    <div class="analysis-header mb-4">
+                        <h3 class="analysis-title">市场细分聚类分析</h3>
+                        <button id="clustering-analyze-btn" class="btn-primary">
+                            <i class="fa fa-project-diagram mr-2"></i>分析
+                        </button>
+                    </div>
+                    
+                    <div id="clustering-loading" class="text-center py-8 hidden">
+                        <i class="fa fa-spinner fa-spin text-blue-600 text-3xl"></i>
+                        <p class="mt-2 text-gray-600">正在进行聚类分析...</p>
+                    </div>
+                    
+                    <div id="clustering-result" class="hidden">
+                        <div class="mb-6">
+                            <h4 class="font-medium text-lg mb-3">聚类分析结果</h4>
+                            <p class="text-sm text-gray-600 mb-4">系统自动将笔记本电脑分为 <span id="cluster-count" class="font-medium">--</span> 个市场细分</p>
+                            
+                            <div class="chart-container mb-6">
+                                <canvas id="clusteringChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div id="clusters-container" class="space-y-6">
+                            <!-- JavaScript将填充此区域 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">笔记本电脑数据分析工具</h3>
+                    <p class="text-gray-300">
+                        本工具用于分析京东平台上的笔记本电脑数据，帮助用户了解市场趋势、品牌分布以及价格与销量的关系。
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">功能概览</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>数据上传与解析</li>
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>基础统计分析</li>
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>交互式图表展示</li>
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>价格预测模型</li>
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>竞品分析</li>
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>价格趋势预测</li>
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>用户评价分析</li>
+                        <li><i class="fa fa-check-circle text-blue-500 mr-2"></i>市场细分聚类</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">联系我们</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><i class="fa fa-envelope text-blue-500 mr-2"></i>support@example.com</li>
+                        <li><i class="fa fa-phone text-blue-500 mr-2"></i>+86 123 4567 8901</li>
+                        <li><i class="fa fa-map-marker-alt text-blue-500 mr-2"></i>北京市海淀区中关村</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 数据分析团队. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript部分 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/advanced.js') }}"></script>
+</body>
+</html>

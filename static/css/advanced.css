@@ -1,0 +1,480 @@
+/* 高级分析系统样式 */
+:root {
+    --primary-color: #4361ee;
+    --primary-light: #4895ef;
+    --primary-dark: #3f37c9;
+    --secondary-color: #f72585;
+    --success-color: #4cc9f0;
+    --warning-color: #f8961e;
+    --danger-color: #f94144;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-800: #343a40;
+    --gray-900: #212529;
+}
+
+/* 全局样式增强 */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f5f7fa;
+    color: var(--gray-800);
+    line-height: 1.6;
+}
+
+/* 卡片样式增强 */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    background: white;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: rgba(67, 97, 238, 0.05);
+    border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* 按钮样式增强 */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-color: transparent;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+}
+
+/* 数据卡片 */
+.data-card {
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.data-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+    z-index: 1;
+}
+
+.data-card .icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.data-card .title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.data-card .value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.data-card .change {
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 2;
+}
+
+.data-card .change.positive {
+    color: #10b981;
+}
+
+.data-card .change.negative {
+    color: #ef4444;
+}
+
+/* 图表容器增强 */
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 400px;
+    width: 100%;
+    background-color: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* 高级分析部分 */
+.analysis-section {
+    margin-bottom: 2rem;
+}
+
+.analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.analysis-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.analysis-filters {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* 竞品分析样式 */
+.competitor-card {
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.competitor-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.competitor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.competitor-name {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.competitor-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.competitor-stat {
+    text-align: center;
+}
+
+.competitor-stat-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.competitor-stat-label {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.diff-positive {
+    color: #10b981;
+}
+
+.diff-negative {
+    color: #ef4444;
+}
+
+/* 价格趋势预测样式 */
+.trend-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.trend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.trend-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.trend-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.trend-stat {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--gray-100);
+    border-radius: 8px;
+}
+
+.trend-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.trend-stat-label {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+/* 情感分析样式 */
+.sentiment-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.sentiment-header {
+    margin-bottom: 1.5rem;
+}
+
+.sentiment-score {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.score-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.score-label {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.sentiment-distribution {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.sentiment-bar {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.sentiment-bar.positive {
+    background-color: #10b981;
+}
+
+.sentiment-bar.neutral {
+    background-color: #f59e0b;
+}
+
+.sentiment-bar.negative {
+    background-color: #ef4444;
+}
+
+.keywords-section {
+    margin-top: 1.5rem;
+}
+
+.keyword-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.keyword-tag.positive {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.keyword-tag.negative {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* 聚类分析样式 */
+.cluster-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    border-top: 4px solid var(--primary-color);
+}
+
+.cluster-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cluster-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.cluster-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.cluster-badge.economy {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.cluster-badge.mainstream {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.cluster-badge.premium {
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--primary-color);
+}
+
+.cluster-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.cluster-stat {
+    text-align: center;
+}
+
+.cluster-stat-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.cluster-stat-label {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.top-brands {
+    margin-top: 1rem;
+}
+
+.brand-pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .data-card {
+        padding: 1rem;
+    }
+    
+    .data-card .icon {
+        font-size: 1.5rem;
+    }
+    
+    .data-card .value {
+        font-size: 1.25rem;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .competitor-stats,
+    .trend-summary,
+    .cluster-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
